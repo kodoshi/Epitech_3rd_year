@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: poll
+spec:
+  type: ClusterIP # expose service to the cluster only (default)
+  selector:
+    app: poll
+  ports:
+    - name: web  # note that this name will be referenced by the poll ingress
+      protocol: TCP
+      port: 80
+      targetPort: 80

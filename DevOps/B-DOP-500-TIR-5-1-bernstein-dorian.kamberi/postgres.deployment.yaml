@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      restartPolicy: Always
+      volumes:
+        - name: postgredb  # volume that is mountable by containers
+          persistentVolumeClaim:
+            claimName: local-pv-claim  # name of persistent volume claim
+      containers:
+      - name: postgres
+        image: postgres:12
+        envFrom:
+          - configMapRef:
+              name: postgres
+          - secretRef:
+              name: postgres
+        env:
+          # fix for an initdb issue
+          # https://github.com/docker-library/postgres/issues/263#issuecomment-416622368
+          - name: PGDATA
+            value: "/var/lib/postgresql/data/pgdata"
+        ports:
+          - containerPort: 5432
+        volumeMounts:  # list of mounted volumes
+          - mountPath: "/var/lib/postgresql/data"
+            name: postgredb

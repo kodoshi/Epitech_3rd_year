@@ -1,0 +1,6 @@
+*.o
+*.txt
+__pycache__
+*.pyo
+*pyc
+input_files

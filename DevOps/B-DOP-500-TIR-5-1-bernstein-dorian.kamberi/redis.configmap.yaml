@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  REDIS_HOST: redis
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2020-11-11T01:56:06Z"
+  name: redis
+  namespace: default
+  resourceVersion: "1305061"
+  selfLink: /api/v1/namespaces/default/configmaps/redis
+  uid: 63272d9d-2070-11ea-b092-42010a84002a

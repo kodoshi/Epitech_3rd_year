@@ -1,0 +1,106 @@
+jenkins:
+  # System message
+  systemMessage: "Welcome to the Chocolatine-Powered Marvin Jenkins Instance."
+
+  remotingSecurity:
+    enabled: true
+
+  globalNodeProperties:
+    - envVars:
+      env:
+        - key: USER_CHOCOLATEEN_PASSWORD
+          value: yes1
+        - key: USER_VAUGIE_G_PASSWORD
+          value: yes2
+        - key: USER_I_DONT_KNOW_PASSWORD
+          value: yes3
+        - key: USER_NASSO_PASSWORD
+          value: yes4
+  # Users
+  securityRealm:
+    local:
+      allowSignup: false
+    users:
+      - id: "admin"
+        password: "admin"
+
+      - id: "chocolateen"
+        name: "Hugo"
+        password: "${USER_CHOCOLATEEN_PASSWORD}"
+
+      - id: "vaugie_g"
+        name: "Garance"
+        password: "${USER_VAUGIE_G_PASSWORD}"
+
+      - id: "i_dont_know"
+        name: "Jeremy"
+        password: "${USER_I_DONT_KNOW_PASSWORD}"
+
+      - id: "nasso"
+        name: "Nassim"
+        password: "${USER_NASSO_PASSWORD}"
+
+  authorizationStategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            description: "Marvin master"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "Hugo"
+
+          - name: "ape"
+            description: "Pedagogical team member"
+            permissions:
+              - "Job/Build"
+              - "Overall/Read"
+            assignments:
+              - "Jeremy"
+
+          - name: "gorilla"
+            description: "Group Obsessively Researching Innovation Linked to Learning and Accomplishment"
+            permissions:
+              - "Job/Build"
+              - "Job/Create"
+              - "Job/Configure"
+              - "Job/Delete"
+              - "Job/Move"
+              - "Builds/Cancel"
+            assignments:
+              - "Garance"
+
+          - name: "assist"
+            description: "Assistant"
+            permissions:
+              - "Job/Read"
+              - "Overall/Read"
+            assignments:
+              - "Nassim"
+
+        items:
+          - name: "Tools"
+            description: "Folder for miscellaneous tools."
+
+  agentProtocols:
+    - "JNLP4-connect"
+    - "Ping"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+
+# to-do
+jobs:
+  - script: >
+      cloneRepository() {
+          displayName("clone-repository")
+      }
+      seed() {
+          displayName("SEED")
+      }
+tool:
+  git:
+    installations:
+      - home: "git"
+        name: "Default"

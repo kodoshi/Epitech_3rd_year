@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poll
+  labels:
+    app: poll
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: poll
+  template:
+    metadata:
+      labels:
+        app: poll
+    spec:
+      restartPolicy: Always  # this is the default
+      affinity:  # scheduling constraints (to which node to assign a pod)
+        podAntiAffinity:  # pod should not run on a node (defined by the topologyKey) 
+                          # if another pod runs on the node already and matches the criteria below
+          requiredDuringSchedulingIgnoredDuringExecution:  # hard rule (must be met)
+            - labelSelector:  # pod's app label matches
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - poll
+              topologyKey: "kubernetes.io/hostname"  #  node's hostname
+      containers:
+      - name: poll
+        image: epitechcontent/t-dop-600-poll:k8s
+        resources:
+          limits:
+            memory: 128Mi
+        envFrom:
+          - configMapRef:
+              name: redis
+        ports:
+          - containerPort: 80

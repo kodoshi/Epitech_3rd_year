@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+import sys
+import copy
+
+
+class Core:
+    command = []
+    recipe = []
+    files = []
+    matrix = []
+    buildCommands = []
+
+    def __init__(self, recipe, command):
+        self.command = command
+        self.recipe = recipe
+        self.getFiles()
+        self.files.sort()
+        self.buildMatrix()
+
+    def getFiles(self):
+        for i in self.recipe:
+            file = i.split(" ")
+            file[0] = file[0][:-1]
+            for j in file:
+                if j not in self.files:
+                    self.files.append(j)
+
+    def buildMatrix(self):
+        for i in range(len(self.files)):
+            line = []
+            for j in range(len(self.files)):
+                line.append(0)
+            self.matrix.append(line)
+
+        for l in range(len(self.files)):
+            for i in self.recipe:
+                file = i.split(" ")
+                file[0] = file[0][:-1]
+                if (file[0] == self.files[l]):
+                    for j in file[1:]:
+                        self.matrix[self.files.index(j)][l] = 1
+
+    def displayMatrix(self):
+        for i in self.matrix:
+            print("[", end="")
+            for j in range(len(self.matrix)):
+                print(i[j], end="")
+                if j != len(self.matrix) - 1:
+                    print(" ", end="")
+            print("]")
+
+    def readMatrix(self):
+        for i in range(len(self.matrix)):
+            self.readLine(i, [])
+
+    def readLine(self, index, links):
+        links = links + [(self.files[index])]
+        try:
+            self.matrix[index].index(1)
+        except:
+            self.displayLinks(links)
+            return
+        for i in range(len(self.matrix)):
+            if self.matrix[index][i] == 1:
+                self.readLine(i, links)
+
+    def displayLinks(self, links):
+        if len(links) == 1:
+            return
+        for i in range(len(links)):
+            print(links[i], end="")
+            if i != len(links) - 1:
+                print(" -> ", end="")
+        print("")
+
+    def completeBuild(self, toBuild):
+        try:
+            index = self.files.index(toBuild)
+        except:
+            sys.exit(84)
+
+        for (matrix_index, i) in enumerate(self.matrix[index]):
+            if i == 1:
+                recipe_index = [i.split(':')[0] for i in self.recipe].index(
+                    self.files[matrix_index])
+                self.buildCommands.append(self.command[recipe_index])
+                self.completeBuild(self.files[matrix_index])
+
+    def displayBuild(self):
+        self.buildCommands.reverse()
+        self.buildCommands = list(dict.fromkeys(self.buildCommands))
+        self.buildCommands.reverse()
+        for i in self.buildCommands:
+            print(i)
+        if len(self.buildCommands) == 0:
+            print("")
+
+
+def is_number(number):
+    try:
+        int(number)
+        return True
+    except ValueError:
+        return False
+
+
+def check_usage(arg):
+    if arg == "-h" or arg == "--help":
+        print("USAGE\n\t./303make")
+        sys.exit(0)  # should be 0
+
+
+def isCommand(variable):
+    return variable[:2] == "cc"
+
+
+def isRecipe(variable):
+    return variable != "" and variable[:2] != "cc"
+
+
+def parseFile(path):
+    try:
+        content = open(path, 'r').read().split("\n")
+    except:
+        sys.exit(84)
+    if content[0] == "":
+        sys.exit(84)
+    command = []
+    recipe = []
+    for s in filter(isCommand, content):
+        command.append(s)
+    for s in filter(isRecipe, content):
+        recipe.append(s)
+    return (command, recipe)
+
+
+def parse(args):
+    if len(args) == 1:
+        check_usage(args[0])
+    if len(args) < 1 or len(args) > 2:
+        print("Invalid number of arguments.")
+        sys.exit(84)
+    recipe, command = parseFile(args[0])
+    if len(args) == 1:
+        return recipe, command, ""
+    else:
+        return recipe, command, args[1]
+
+
+sys.argv.pop(0)
+command, recipe, toBuild = parse(sys.argv)
+
+core = Core(recipe, command)
+
+if (len(sys.argv) == 1):
+    core.displayMatrix()
+    print("")
+    core.readMatrix()
+else:
+    core.completeBuild(toBuild)
+    core.displayBuild()

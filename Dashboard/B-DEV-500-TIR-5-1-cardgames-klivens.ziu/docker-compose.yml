@@ -1,0 +1,42 @@
+version: "3"
+services:
+  database:
+    build: ./database
+    environment:
+      - MYSQL_USER=${DASHBOARD_SQL_USER:-dashboard}
+      - MYSQL_PASSWORD=${DASHBOARD_SQL_PASSWORD:-dashboardpassword}
+      - MYSQL_DATABASE=${DASHBOARD_SQL_DATABASE:-dashboard}
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    networks:
+      - app
+    ports:
+      - "3306:3306"
+
+  backend:
+    build: ./backend
+    environment:
+      - HOST=80
+      - MYSQL_USER=${DASHBOARD_SQL_USER:-dashboard}
+      - MYSQL_PASSWORD=${DASHBOARD_SQL_PASSWORD:-dashboardpassword}
+      - MYSQL_DATABASE=${DASHBOARD_SQL_DATABASE:-dashboard}
+      - MYSQL_HOST=${DASHBOARD_SQL_HOST:-database}
+      - JWT_SECRET=${DASHBOARD_JWT_SECRET:-dashboardjwtsecret}
+      - API_KEY_TWITTER=${DASHBOARD_API_KEY_TWITTER:-UIMKVXOeA7epDeIn4yQH1zfBx}
+      - API_KEY_SECRET_TWITTER=${DASHBOARD_API_KEY_SECRET_TWITTER:-O2UfeWedF2Nmwbkn3D7sk8kwWbRze4yRCuMR6GkGzb1ljDh23D}
+      - CALLBACK_TWITTER=${DASHBOARD_CALLBACK_TWITTER:-http://localhost:3000/oauth/twitter}
+      - API_KEY_WEATHER=${DASHBOARD_API_KEY_WEATHER:-7da7e5ad013ead51dce54c73e01d6037}
+      - API_KEY_NEWS=${DASHBOARD_API_KEY_NEWS:-30165635ed0843259e2f1db1cf0177ad}
+    networks:
+      - app
+    ports:
+      - "8080:80"
+
+  frontend:
+    build: ./frontend
+    environment:
+      - API_ADDRESS=${DASHBOARD_API_ADDRESS:-127.0.0.1}
+    ports:
+      - "3000:80"
+
+networks:
+  app:

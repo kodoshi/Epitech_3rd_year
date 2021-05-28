@@ -1,0 +1,104 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"DaemonSet","metadata":{"annotations":{"seccomp.security.alpha.kubernetes.io/pod":"docker/default"},"labels":{"app":"cadvisor"},"name":"cadvisor","namespace":"cadvisor"},"spec":{"selector":{"matchLabels":{"app":"cadvisor","name":"cadvisor"}},"template":{"metadata":{"labels":{"app":"cadvisor","name":"cadvisor"}},"spec":{"automountServiceAccountToken":false,"containers":[{"image":"k8s.gcr.io/cadvisor:v0.30.2","name":"cadvisor","ports":[{"containerPort":8080,"name":"http","protocol":"TCP"}],"resources":{"limits":{"cpu":"300m","memory":"2000Mi"},"requests":{"cpu":"150m","memory":"200Mi"}},"volumeMounts":[{"mountPath":"/rootfs","name":"rootfs","readOnly":true},{"mountPath":"/var/run","name":"var-run","readOnly":true},{"mountPath":"/sys","name":"sys","readOnly":true},{"mountPath":"/var/lib/docker","name":"docker","readOnly":true},{"mountPath":"/dev/disk","name":"disk","readOnly":true}]}],"serviceAccountName":"cadvisor","terminationGracePeriodSeconds":30,"volumes":[{"hostPath":{"path":"/"},"name":"rootfs"},{"hostPath":{"path":"/var/run"},"name":"var-run"},{"hostPath":{"path":"/sys"},"name":"sys"},{"hostPath":{"path":"/var/lib/docker"},"name":"docker"},{"hostPath":{"path":"/dev/disk"},"name":"disk"}]}}}}
+    seccomp.security.alpha.kubernetes.io/pod: docker/default
+  creationTimestamp: "2020-11-11T00:22:16Z"
+  generation: 1
+  labels:
+    app: cadvisor
+  name: cadvisor
+  namespace: cadvisor
+  resourceVersion: "1865627"
+  selfLink: /apis/extensions/v1beta1/namespaces/cadvisor/daemonsets/cadvisor
+  uid: 9c84b1b0-21f5-11ea-b092-42010a84002a
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cadvisor
+      name: cadvisor
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cadvisor
+        name: cadvisor
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - image: k8s.gcr.io/cadvisor:v0.30.2
+        imagePullPolicy: IfNotPresent
+        name: cadvisor
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 300m
+            memory: 2000Mi
+          requests:
+            cpu: 150m
+            memory: 200Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /rootfs
+          name: rootfs
+          readOnly: true
+        - mountPath: /var/run
+          name: var-run
+          readOnly: true
+        - mountPath: /sys
+          name: sys
+          readOnly: true
+        - mountPath: /var/lib/docker
+          name: docker
+          readOnly: true
+        - mountPath: /dev/disk
+          name: disk
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: cadvisor
+      serviceAccountName: cadvisor
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - hostPath:
+          path: /
+          type: ""
+        name: rootfs
+      - hostPath:
+          path: /var/run
+          type: ""
+        name: var-run
+      - hostPath:
+          path: /sys
+          type: ""
+        name: sys
+      - hostPath:
+          path: /var/lib/docker
+          type: ""
+        name: docker
+      - hostPath:
+          path: /dev/disk
+          type: ""
+        name: disk
+  templateGeneration: 1
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+status:
+  currentNumberScheduled: 2
+  desiredNumberScheduled: 2
+  numberMisscheduled: 0
+  numberReady: 0
+  numberUnavailable: 2
+  observedGeneration: 1
+  updatedNumberScheduled: 2

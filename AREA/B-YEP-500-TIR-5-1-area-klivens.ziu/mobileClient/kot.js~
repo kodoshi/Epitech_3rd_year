@@ -1,0 +1,11 @@
+let shiko = {
+    name: "hello",
+    lname: "world"
+}
+
+
+nam = shiko.name;
+
+nam = "nooo";
+
+console.log(shiko.nam);

@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  # ingresses must be in the same namespace as the services?
+  name: poll
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: poll.dop.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: poll
+          servicePort: web

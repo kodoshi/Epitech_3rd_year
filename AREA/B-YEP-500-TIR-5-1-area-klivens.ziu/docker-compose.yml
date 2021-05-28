@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  backend:
+    build: ./backend/
+    container_name: backend
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - back
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    env_file:
+      - ./backend/.env
+
+  mobile:
+    container_name: mobile
+    build: ./mobile/
+    volumes:
+      - apk:/var/lib/apk
+    #restart: always
+
+  frontend:
+    #image: web_app
+    #container_name: "web_app"
+    container_name: frontend
+    build: ./frontend/
+    restart: always
+    ports:
+      - "8081:8081"
+    networks:
+      - back
+    volumes:
+      - ./frontend/:/app
+      - /app/node_modules
+      - apk:/var/lib/apk
+      #path app
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - mobile
+      - backend
+
+networks:
+  back:
+    driver: bridge
+
+volumes:
+  apk:

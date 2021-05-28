@@ -1,0 +1,10 @@
+.stack-work/
+*~
+*.o
+*.hi
+*.a
+*.so
+.stack-work
+stack.yaml.lock
+hal
+*.pdf
